@@ -5,6 +5,8 @@ import dao.CustomersDao;
 import db.ConnectionPool;
 import db.DbManager;
 import db.DbUtils;
+import exceptions.CustomerAlreadyExistException;
+import exceptions.GetCustomerException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,7 +22,12 @@ public class CustomersDbDao implements CustomersDao {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, email);
         values.put(2, password);
-        ResultSet resultSet = DbUtils.runQueryWithResultSet(DbManager.IS_CUSTOMER_EXIST, values);
+        ResultSet resultSet = null;
+        try {
+            resultSet = DbUtils.runQueryWithResultSet(DbManager.IS_CUSTOMER_EXIST, values);
+        } catch (SQLException | InterruptedException e) {
+            throw new CustomerAlreadyExistException();
+        }
         if (resultSet != null) {
             return true;
         } else {
@@ -36,8 +43,7 @@ public class CustomersDbDao implements CustomersDao {
             values.put(2, customer.getLastName());
             values.put(3, customer.getEmail());
             values.put(4, customer.getPassword());
-            DbUtils.runQueryWithResultSet(DbManager.CREATE_CUSTOMER, values);
-            return true;
+            return DbUtils.runQuery(DbManager.CREATE_CUSTOMER, values);
         } else {
             System.out.println("Customer already exist");
             return false;
@@ -51,23 +57,14 @@ public class CustomersDbDao implements CustomersDao {
         values.put(2, customer.getLastName());
         values.put(3, customer.getEmail());
         values.put(4, customer.getId());
-        try {
-            return DbUtils.runQuery(DbManager.UPDATE_CUSTOMER, values);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            return false;
-        }
+        return DbUtils.runQuery(DbManager.UPDATE_CUSTOMER, values);
     }
 
     @Override
     public void deleteCustomer(int customerId) {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, customerId);
-        try {
-            DbUtils.runQuery(DbManager.DELETE_CUSTOMER, values);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        DbUtils.runQuery(DbManager.DELETE_CUSTOMER, values);
     }
 
     @Override
@@ -86,14 +83,14 @@ public class CustomersDbDao implements CustomersDao {
 
     @Override
     public Customer getOneCustomer(int customerId) {
+        Customer customer = null;
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, customerId);
-        ResultSet resultSet = DbUtils.runQueryWithResultSet(DbManager.GET_SINGLE_CUSTOMER, values);
-        Customer customer = null;
         try {
-            customer = buildCustomer(resultSet);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        ResultSet resultSet = DbUtils.runQueryWithResultSet(DbManager.GET_SINGLE_CUSTOMER, values);
+        customer = buildCustomer(resultSet);
+        } catch (SQLException | InterruptedException e) {
+            throw new GetCustomerException();
         }
         return customer;
     }

@@ -1,6 +1,6 @@
 package exceptions;
 
-public class UpdateErrorException extends Exception{
+public class UpdateErrorException extends RuntimeException{
     public UpdateErrorException() {
         super(String.valueOf(ErrorMsg.UPDATE_ERROR));
     }

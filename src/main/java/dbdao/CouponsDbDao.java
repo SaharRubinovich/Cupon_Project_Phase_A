@@ -7,6 +7,7 @@ import dao.CouponsDao;
 import db.ConnectionPool;
 import db.DbManager;
 import db.DbUtils;
+import exceptions.GetCouponException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,35 +22,21 @@ public class CouponsDbDao implements CouponsDao {
     @Override
     public boolean addCoupons(Coupon coupon) {
         Map<Integer, Object> values = createMapForSqlQuery(coupon);
-        try {
-            return DbUtils.runQuery(DbManager.CREATE_COUPON, values);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return DbUtils.runQuery(DbManager.CREATE_COUPON, values);
     }
 
     @Override
     public boolean updateCoupon(Coupon coupon) {
         Map<Integer, Object> values = createMapForSqlQuery(coupon);
         values.put(values.size() + 1, coupon.getId());
-        try {
-            return DbUtils.runQuery(DbManager.UPDATE_COUPON, values);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return DbUtils.runQuery(DbManager.UPDATE_COUPON, values);
     }
 
     @Override
     public void deleteCoupon(int couponId) {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, couponId);
-        try {
-            DbUtils.runQuery(DbManager.DELETE_COUPON, values);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        DbUtils.runQuery(DbManager.DELETE_COUPON, values);
     }
 
     @Override
@@ -62,7 +49,7 @@ public class CouponsDbDao implements CouponsDao {
                 coupons.add(coupon);
             }
         } catch (SQLException | InterruptedException e) {
-            e.printStackTrace();
+            throw new GetCouponException();
         }
         return coupons;
     }
@@ -76,20 +63,26 @@ public class CouponsDbDao implements CouponsDao {
             ResultSet resultSet = DbUtils.runQueryWithResultSet(DbManager.GET_SINGLE_COUPON, values);
             resultSet.next();
             coupon = createCouponInstance(resultSet);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException | InterruptedException e) {
+            throw new GetCouponException();
         }
         return coupon;
     }
 
     @Override
     public boolean addCouponPurchase(int customerId, int couponId) {
-        return false;
+        Map<Integer, Object> values = new HashMap<>();
+        values.put(1,customerId);
+        values.put(2,couponId);
+        return DbUtils.runQuery(DbManager.ADD_COUPON_PURCHASE,values);
     }
 
     @Override
     public void deleteCouponPurchase(int customerId, int couponId) {
-
+        Map<Integer, Object> values = new HashMap<>();
+        values.put(1, customerId);
+        values.put(2, couponId);
+        DbUtils.runQuery(DbManager.DELETE_COUPON_PURCHASE,values);
     }
 
     private Map<Integer, Object> createMapForSqlQuery(Coupon coupon) {

@@ -14,7 +14,7 @@ public class DbUtils {
         ConnectionPool.getInstance().returnConnection(connection);
     }
 
-    public static boolean runQuery(String dbString, Map<Integer, Object> values) throws SQLException {
+    public static boolean runQuery(String dbString, Map<Integer, Object> values)  {
         try {
             connection = ConnectionPool.getInstance().getConnection();
             PreparedStatement preparedStatement = fillStatement(dbString,values);
@@ -23,20 +23,22 @@ public class DbUtils {
         } catch (InterruptedException | SQLException e) {
             e.printStackTrace();
         } finally {
-            ConnectionPool.getInstance().returnConnection(connection);
+            try {
+                ConnectionPool.getInstance().returnConnection(connection);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
 
-    public static ResultSet runQueryWithResultSet(String sql, Map<Integer, Object> values) {
-        try {
+    public static ResultSet runQueryWithResultSet(String sql, Map<Integer, Object> values) throws SQLException, InterruptedException {
+
             Connection connection = ConnectionPool.getInstance().getConnection();
             PreparedStatement preparedStatement = fillStatement(sql, values);
+            ConnectionPool.getInstance().returnConnection(connection);
             return preparedStatement.executeQuery();
-        } catch (InterruptedException | SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+
     }
 
     private static PreparedStatement fillStatement(String sql, Map<Integer, Object> values) throws SQLException {
@@ -63,6 +65,7 @@ public class DbUtils {
     public static ResultSet getAllInstancesWithResultSet(String sql) throws SQLException, InterruptedException {
         Connection connection = ConnectionPool.getInstance().getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ConnectionPool.getInstance().returnConnection(connection);
         return  preparedStatement.executeQuery(sql);
     }
 }

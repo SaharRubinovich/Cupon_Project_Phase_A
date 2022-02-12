@@ -116,6 +116,10 @@ public class DbManager {
     public static final String GET_ALL_COUPONS = "SELECT * FROM `coupon_project`.`coupons` ";
     public static final String GET_SINGLE_COUPON = "SELECT * FROM `coupon_project`.`coupons` " +
             "WHERE id=?";
+    public static final String ADD_COUPON_PURCHASE = "INSERT INTO `coupon_project`.`customers_vs_coupons` " +
+            "(`customer_id`,`coupon_id`) VALUES(?,?)";
+    public static final String DELETE_COUPON_PURCHASE = "DELETE FROM `coupon_project`.`customers_vs_coupons` " +
+            "WHERE customer_id=?, coupon_id=?";
 
     public static void createDb() throws SQLException, InterruptedException {
         DbUtils.runQuery(CREATE_DB);

@@ -5,6 +5,9 @@ import dao.CompaniesDao;
 import db.ConnectionPool;
 import db.DbUtils;
 import db.DbManager;
+import exceptions.CompanyAlreadyExistException;
+import exceptions.GetCompanyException;
+import exceptions.UpdateErrorException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -22,7 +25,12 @@ public class CompaniesDbDao implements CompaniesDao {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, email);
         values.put(2, password);
-        ResultSet resultSet = DbUtils.runQueryWithResultSet(DbManager.IS_COMPANY_EXIST, values);
+        ResultSet resultSet = null;
+        try {
+            resultSet = DbUtils.runQueryWithResultSet(DbManager.IS_COMPANY_EXIST, values);
+        } catch (SQLException | InterruptedException e) {
+            throw new CompanyAlreadyExistException();
+        }
         if (resultSet != null) {
             return true;
         } else {
@@ -42,11 +50,7 @@ public class CompaniesDbDao implements CompaniesDao {
             values.put(1, company.getName());
             values.put(2, company.getEmail());
             values.put(3, company.getPassword());
-            try {
-                return DbUtils.runQuery(DbManager.CREATE_COMPANY, values);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            return DbUtils.runQuery(DbManager.CREATE_COMPANY, values);
         }
         return false;
     }
@@ -62,12 +66,7 @@ public class CompaniesDbDao implements CompaniesDao {
         values.put(1, company.getName());
         values.put(2, company.getEmail());
         values.put(3, company.getId());
-        try {
-            return DbUtils.runQuery(DbManager.UPDATE_COMPANY, values);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            return false;
-        }
+        return DbUtils.runQuery(DbManager.UPDATE_COMPANY, values);
     }
     /*
         Updating company in DB with SQL statement that was prepared beforehand in the DbManager
@@ -78,11 +77,7 @@ public class CompaniesDbDao implements CompaniesDao {
     public void deleteCompany(int companyId) {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, companyId);
-        try {
-            DbUtils.runQuery(DbManager.DELETE_COMPANY, values);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+        DbUtils.runQuery(DbManager.DELETE_COMPANY, values);
     }
     /*
         Delete a company with a given id that is sent into a query prepared beforehand with map
@@ -123,16 +118,16 @@ public class CompaniesDbDao implements CompaniesDao {
         Company company = null;
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, companyId);
-        ResultSet resultSet = DbUtils.runQueryWithResultSet(DbManager.GET_SINGLE_COMPANY,values);
         try {
+            ResultSet resultSet = DbUtils.runQueryWithResultSet(DbManager.GET_SINGLE_COMPANY,values);
             company = new Company(
                     resultSet.getInt("id"),
                     resultSet.getString("name"),
                     resultSet.getString("email"),
                     resultSet.getString("password")
             );
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException | InterruptedException throwables) {
+            throw new GetCompanyException();
         }
         return company;
     }
