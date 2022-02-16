@@ -11,7 +11,7 @@ public class Customer {
     private ArrayList<Coupon> coupons;
 
     public Customer(int id, String firstName, String lastName, String email, String password) {
-        this.id = id;
+        setId(id);
         setFirstName(firstName);
         setLastName(lastName);
         setEmail(email);
@@ -48,6 +48,10 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getPassword() {

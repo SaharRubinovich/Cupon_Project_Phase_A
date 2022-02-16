@@ -1,10 +1,9 @@
 package dbdao;
 
-import beans.Category;
 import beans.Coupon;
-import beans.Customer;
 import dao.CouponsDao;
 import db.ConnectionPool;
+import db.DbCouponManager;
 import db.DbManager;
 import db.DbUtils;
 import exceptions.GetCouponException;
@@ -13,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CouponsDbDao implements CouponsDao {
@@ -22,28 +22,34 @@ public class CouponsDbDao implements CouponsDao {
     @Override
     public boolean addCoupons(Coupon coupon) {
         Map<Integer, Object> values = createMapForSqlQuery(coupon);
-        return DbUtils.runQuery(DbManager.CREATE_COUPON, values);
+        return DbUtils.runQuery(DbCouponManager.CREATE_COUPON, values);
     }
+    /*
+        Method that add coupon to db with a map to fill the generic query that we use in the method.
+     */
 
     @Override
     public boolean updateCoupon(Coupon coupon) {
         Map<Integer, Object> values = createMapForSqlQuery(coupon);
         values.put(values.size() + 1, coupon.getId());
-        return DbUtils.runQuery(DbManager.UPDATE_COUPON, values);
+        return DbUtils.runQuery(DbCouponManager.UPDATE_COUPON, values);
     }
 
     @Override
     public void deleteCoupon(int couponId) {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, couponId);
-        DbUtils.runQuery(DbManager.DELETE_COUPON, values);
+        DbUtils.runQuery(DbCouponManager.DELETE_COUPON, values);
     }
+    /*
+        Delete coupon from db with a specific indicator (Id in this case)
+     */
 
     @Override
-    public ArrayList<Coupon> getAllCoupons() {
+    public List<Coupon> getAllCoupons() {
         ArrayList<Coupon> coupons = new ArrayList<>();
         try {
-            ResultSet resultSet = DbUtils.getAllInstancesWithResultSet(DbManager.GET_ALL_COUPONS);
+            ResultSet resultSet = DbUtils.getAllInstancesWithResultSet(DbCouponManager.GET_ALL_COUPONS);
             while (resultSet.next()) {
                 Coupon coupon = createCouponInstance(resultSet);
                 coupons.add(coupon);
@@ -53,6 +59,9 @@ public class CouponsDbDao implements CouponsDao {
         }
         return coupons;
     }
+    /*
+        Method to create an array list of coupons from tbe db
+     */
 
     @Override
     public Coupon getOneCoupon(int couponId) {
@@ -60,7 +69,7 @@ public class CouponsDbDao implements CouponsDao {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, couponId);
         try {
-            ResultSet resultSet = DbUtils.runQueryWithResultSet(DbManager.GET_SINGLE_COUPON, values);
+            ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCouponManager.GET_SINGLE_COUPON, values);
             resultSet.next();
             coupon = createCouponInstance(resultSet);
         } catch (SQLException | InterruptedException e) {
@@ -68,6 +77,9 @@ public class CouponsDbDao implements CouponsDao {
         }
         return coupon;
     }
+    /*
+        Method that get a single coupon from the db with indicator(id in this case)
+     */
 
     @Override
     public boolean addCouponPurchase(int customerId, int couponId) {
@@ -82,7 +94,7 @@ public class CouponsDbDao implements CouponsDao {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, customerId);
         values.put(2, couponId);
-        DbUtils.runQuery(DbManager.DELETE_COUPON_PURCHASE,values);
+        DbUtils.runQuery(DbCouponManager.DELETE_COUPON_PURCHASE_BY_CUSTOMER,values);
     }
 
     private Map<Integer, Object> createMapForSqlQuery(Coupon coupon) {
@@ -103,7 +115,7 @@ public class CouponsDbDao implements CouponsDao {
         return new Coupon(
                 resultSet.getInt("id"),
                 resultSet.getInt("company_id"),
-                (Category) resultSet.getObject("category_id"),
+                resultSet.getInt("category_id"),
                 resultSet.getString("title"),
                 resultSet.getString("description"),
                 resultSet.getDate("start_date"),

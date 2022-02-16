@@ -74,52 +74,17 @@ public class DbManager {
             "    REFERENCES `coupon_project`.`coupons` (`id`)" +
             "    ON DELETE NO ACTION" +
             "    ON UPDATE NO ACTION);";
+
     public static final String DROP_COMPANIES_TABLE = "DROP TABLE IF EXISTS `coupon_project`.`companies`";
     public static final String DROP_CUSTOMERS_TABLE = "DROP TABLE IF EXISTS `coupon_project`.`customers`";
     public static final String DROP_CATEGORIES_TABLE = "DROP TABLE IF EXISTS `coupon_project`.`categories`";
     public static final String DROP_COUPONS_TABLE = "DROP TABLE IF EXISTS `coupon_project`.`coupons`";
     public static final String DROP_CUSTOMER_VS_COUPONS_TABLE = "DROP TABLE IF EXISTS `coupon_project`.`customers_vs_coupons`";
-    /*
-        Strings that contain the code to create tables and schemes in MySQL
-    */
-    public static final String CREATE_CUSTOMER = "INSERT INTO `coupon_project`.`customers` " +
-            "(first_name,last_name,email,password) " +
-            "VALUES(?,?,?,?)";
-    public static final String IS_CUSTOMER_EXIST = "SELECT count(*) FROM `coupon_project`.`customers` " +
-            "WHERE email=? AND password=?";
-    public static final String UPDATE_CUSTOMER = "UPDATE `coupon_project`.`customers` " +
-            "SET first_name=?, last_name=?, email=? WHERE id=?";
-    public static final String DELETE_CUSTOMER = "DELETE FROM `coupon_project`.`customers` " +
-            "WHERE id=?";
-    public static final String GET_ALL_CUSTOMERS = "SELECT * FROM `coupon_project`.`customers` ";
-    public static final String GET_SINGLE_CUSTOMER = "SELECT * FROM `coupon_project`.`customers` " +
-            "WHERE id=?";
-    public static final String CREATE_COMPANY = "INSERT INTO `coupon_project`.`companies` " +
-            "(name,email,password) VALUES(?,?,?)";
-    public static final String IS_COMPANY_EXIST = "SELECT count(*) FROM `coupon_project`.`companies` " +
-            "WHERE email=? AND password=?";
-    public static final String UPDATE_COMPANY = "UPDATE `coupon_project`.`companies` " +
-            "SET name=?, email=? WHERE id=?";
-    public static final String DELETE_COMPANY = "DELETE FROM `coupon_project`.`companies` " +
-            "WHERE id=?";
-    public static final String GET_ALL_COMPANIES = "SELECT * FROM `coupon_project`.`companies` ";
-    public static final String GET_SINGLE_COMPANY = "SELECT * FROM `coupon_project`.`companies` " +
-            "WHERE id=?";
-    public static final String CREATE_COUPON = "INSERT INTO `coupon_project`.`coupons` " +
-            "(company_id,category_id,title,description,start_date,end_date,amount,price,image) " +
-            "VALUES(?,?,?,?,?,?,?,?,?)";
-    public static final String UPDATE_COUPON = "UPDATE `coupon_project`.`coupons` " +
-            "SET company_id=?, category_id=?, title=?, description=?, start_date=?, " +
-            "end_date=?, amount=?, price=?, image=? WHERE id=?";
-    public static final String DELETE_COUPON = "DELETE FROM `coupon_project`.`coupons` " +
-            "WHERE id=?";
-    public static final String GET_ALL_COUPONS = "SELECT * FROM `coupon_project`.`coupons` ";
-    public static final String GET_SINGLE_COUPON = "SELECT * FROM `coupon_project`.`coupons` " +
-            "WHERE id=?";
     public static final String ADD_COUPON_PURCHASE = "INSERT INTO `coupon_project`.`customers_vs_coupons` " +
             "(`customer_id`,`coupon_id`) VALUES(?,?)";
-    public static final String DELETE_COUPON_PURCHASE = "DELETE FROM `coupon_project`.`customers_vs_coupons` " +
-            "WHERE customer_id=?, coupon_id=?";
+    /*
+            Strings that contain the code to create tables and schemes in MySQL
+        */
 
     public static void createDb() throws SQLException, InterruptedException {
         DbUtils.runQuery(CREATE_DB);

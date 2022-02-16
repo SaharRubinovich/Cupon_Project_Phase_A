@@ -3,17 +3,17 @@ package dbdao;
 import beans.Company;
 import dao.CompaniesDao;
 import db.ConnectionPool;
+import db.DbCompanyManager;
 import db.DbUtils;
-import db.DbManager;
 import exceptions.CompanyAlreadyExistException;
 import exceptions.GetCompanyException;
-import exceptions.UpdateErrorException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CompaniesDbDao implements CompaniesDao {
@@ -27,7 +27,7 @@ public class CompaniesDbDao implements CompaniesDao {
         values.put(2, password);
         ResultSet resultSet = null;
         try {
-            resultSet = DbUtils.runQueryWithResultSet(DbManager.IS_COMPANY_EXIST, values);
+            resultSet = DbUtils.runQueryWithResultSet(DbCompanyManager.IS_COMPANY_EXIST, values);
         } catch (SQLException | InterruptedException e) {
             throw new CompanyAlreadyExistException();
         }
@@ -50,7 +50,7 @@ public class CompaniesDbDao implements CompaniesDao {
             values.put(1, company.getName());
             values.put(2, company.getEmail());
             values.put(3, company.getPassword());
-            return DbUtils.runQuery(DbManager.CREATE_COMPANY, values);
+            return DbUtils.runQuery(DbCompanyManager.CREATE_COMPANY, values);
         }
         return false;
     }
@@ -66,7 +66,7 @@ public class CompaniesDbDao implements CompaniesDao {
         values.put(1, company.getName());
         values.put(2, company.getEmail());
         values.put(3, company.getId());
-        return DbUtils.runQuery(DbManager.UPDATE_COMPANY, values);
+        return DbUtils.runQuery(DbCompanyManager.UPDATE_COMPANY, values);
     }
     /*
         Updating company in DB with SQL statement that was prepared beforehand in the DbManager
@@ -77,7 +77,7 @@ public class CompaniesDbDao implements CompaniesDao {
     public void deleteCompany(int companyId) {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, companyId);
-        DbUtils.runQuery(DbManager.DELETE_COMPANY, values);
+        DbUtils.runQuery(DbCompanyManager.DELETE_COMPANY, values);
     }
     /*
         Delete a company with a given id that is sent into a query prepared beforehand with map
@@ -85,21 +85,15 @@ public class CompaniesDbDao implements CompaniesDao {
      */
 
     @Override
-    public ArrayList<Company> getAllCompanies() {
+    public List<Company> getAllCompanies() {
         Connection connection = null;
         ResultSet resultSet;
         ArrayList<Company> companies = new ArrayList<>();
         try {
            connection = ConnectionPool.getInstance().getConnection();
-           resultSet = connection.prepareStatement(DbManager.GET_ALL_COMPANIES).executeQuery();
+           resultSet = connection.prepareStatement(DbCompanyManager.GET_ALL_COMPANIES).executeQuery();
            while (resultSet.next()){
-               Company company = new Company(
-                       resultSet.getInt("id"),
-                       resultSet.getString("name"),
-                       resultSet.getString("email"),
-                       resultSet.getString("password")
-               );
-               companies.add(company);
+               companies.add(buildCompanyInstance(resultSet));
            }
         } catch (SQLException | InterruptedException throwables) {
             throwables.printStackTrace();
@@ -119,13 +113,8 @@ public class CompaniesDbDao implements CompaniesDao {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, companyId);
         try {
-            ResultSet resultSet = DbUtils.runQueryWithResultSet(DbManager.GET_SINGLE_COMPANY,values);
-            company = new Company(
-                    resultSet.getInt("id"),
-                    resultSet.getString("name"),
-                    resultSet.getString("email"),
-                    resultSet.getString("password")
-            );
+            ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCompanyManager.GET_SINGLE_COMPANY,values);
+            buildCompanyInstance(resultSet);
         } catch (SQLException | InterruptedException throwables) {
             throw new GetCompanyException();
         }
@@ -133,5 +122,16 @@ public class CompaniesDbDao implements CompaniesDao {
     }
     /*
         Method that get the info of a specific company the user asked about with the use of ResultSet
+     */
+    private Company buildCompanyInstance(ResultSet resultSet) throws SQLException {
+        return new Company(
+                resultSet.getInt("id"),
+                resultSet.getString("name"),
+                resultSet.getString("email"),
+                resultSet.getString("password")
+        );
+    }
+    /*
+        Private method to build a company instance instead of using double code in 2 different methods
      */
 }

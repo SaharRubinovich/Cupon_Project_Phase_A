@@ -14,18 +14,18 @@ public class Coupon {
     private double price;
     private String image;
 
-    public Coupon(int id, int companyId, Category category, String title, String description, Date startDate,
+    public Coupon(int id, int companyId, int category, String title, String description, Date startDate,
                   Date endDate, int amount, double price, String image) {
-        this.id = id;
-        this.companyId = companyId;
-        this.category = category;
-        this.title = title;
-        this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.amount = amount;
-        this.price = price;
-        this.image = image;
+        setId(id);
+        setCompanyId(companyId);
+        setCategory(category);
+        setTitle(title);
+        setDescription(description);
+        setStartDate(startDate);
+        setEndDate(endDate);
+        setAmount(amount);
+        setPrice(price);
+        setImage(image);
     }
 
     public int getId() {
@@ -48,8 +48,8 @@ public class Coupon {
         return category;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategory(int category) {
+        this.category = Category.values()[category];
     }
 
     public String getTitle() {
