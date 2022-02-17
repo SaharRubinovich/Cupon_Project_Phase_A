@@ -20,4 +20,7 @@ public class DbCouponManager {
             "WHERE customer_id=?";
     public static final String DELETE_COUPON_PURCHASE_COMPANY ="DELETE FROM `coupon_project`.`customers_vs_coupons` " +
             "WHERE coupon_id=?";
+    public static final String EXPIRE_COUPONS_DELETE = "SET SQL_SAFE_UPDATES=0;" +
+            "DELETE FROM `coupon_project`.`coupons` WHERE `end_date` < curdate();" +
+            "SET SQL_SAFE_UPDATES=1;";
 }

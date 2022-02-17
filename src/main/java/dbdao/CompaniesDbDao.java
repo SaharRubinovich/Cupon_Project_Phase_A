@@ -1,6 +1,7 @@
 package dbdao;
 
 import beans.Company;
+import beans.Coupon;
 import dao.CompaniesDao;
 import db.ConnectionPool;
 import db.DbCompanyManager;
@@ -134,4 +135,17 @@ public class CompaniesDbDao implements CompaniesDao {
     /*
         Private method to build a company instance instead of using double code in 2 different methods
      */
+    public int getCompanyIdInLogin(String email, String password){
+        Map<Integer, Object> values = new HashMap<>();
+        values.put(1,email);
+        values.put(2,password);
+        try {
+            ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCompanyManager.GET_SINGLE_ID,values);
+            resultSet.next();
+            return resultSet.getInt("id");
+        } catch (SQLException | InterruptedException e) {
+            System.out.println(e.getMessage());
+            throw new GetCompanyException();
+        }
+    }
 }

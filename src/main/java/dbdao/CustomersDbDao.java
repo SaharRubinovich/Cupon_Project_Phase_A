@@ -7,10 +7,7 @@ import db.ConnectionPool;
 import db.DbCouponManager;
 import db.DbCustomerManager;
 import db.DbUtils;
-import exceptions.CheckingPurchaseException;
-import exceptions.CustomerAlreadyExistException;
-import exceptions.CustomerFacadeException;
-import exceptions.GetCustomerException;
+import exceptions.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -124,5 +121,17 @@ public class CustomersDbDao implements CustomersDao {
             throw new CheckingPurchaseException();
         }
         return false;
+    }
+    public int getCustomerIdInLogin(String email, String password) throws LoginException {
+        Map<Integer, Object> values = new HashMap<>();
+        values.put(1, email);
+        values.put(2, password);
+        try {
+            ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCustomerManager.GET_SINGLE_CUSTOMER_ID,values);
+            resultSet.next();
+            return resultSet.getInt("id");
+        } catch (SQLException | InterruptedException e) {
+            throw new LoginException("Error accord while fetching customer id.");
+        }
     }
 }

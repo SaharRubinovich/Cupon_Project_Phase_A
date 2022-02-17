@@ -56,7 +56,7 @@ public class DbManager {
                     "  CONSTRAINT `category_id`" +
                     "    FOREIGN KEY (`category_id`)" +
                     "    REFERENCES `coupon_project`.`categories` (`id`)" +
-                    "    ON DELETE NO ACTION" +
+                    "    ON DELETE CASCADE" +
                     "    ON UPDATE NO ACTION);";
     public static final String CREATE_CUSTOMERS_VS_COUPONS = "CREATE TABLE IF NOT EXISTS" +
             " `coupon_project`.`customers_vs_coupons` (" +
@@ -132,6 +132,31 @@ public class DbManager {
 
     public static void dropCustomersVsCouponsTable() throws SQLException, InterruptedException {
         DbUtils.runQuery(DROP_CUSTOMER_VS_COUPONS_TABLE);
+    }
+
+    public static void buildCompleteDb(){
+        try {
+            DbManager.createDb();
+            DbManager.createCategoriesTable();
+            DbManager.createCompaniesTable();
+            DbManager.createCustomersTable();
+            DbManager.createCouponsTable();
+            DbManager.createCustomersVsCouponsTable();
+        } catch (SQLException | InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    public static void dropCompleteDb(){
+        try {
+            DbManager.dropCustomersVsCouponsTable();
+            DbManager.dropCouponsTable();
+            DbManager.dropCompaniesTable();
+            DbManager.dropCustomersTable();
+            DbManager.dropCategoriesTable();
+            DbManager.dropDb();
+        } catch (SQLException | InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
 

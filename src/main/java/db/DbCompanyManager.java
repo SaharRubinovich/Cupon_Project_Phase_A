@@ -14,4 +14,6 @@ public class DbCompanyManager {
             "WHERE id=?";
     public static final String CHECK_IF_COUPON_EXIST = "SELECT COUNT(*) FROM `coupon_project`.`coupons` " +
             "WHERE company_id=?, title=?";
+    public static final String GET_SINGLE_ID = "SELECT * FROM `coupon_project`.`companies` " +
+            "WHERE email=?, password=?";
 }

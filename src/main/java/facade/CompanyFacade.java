@@ -29,6 +29,10 @@ public class CompanyFacade extends ClientFacade {
         this.companyId = companyId;
     }
 
+    public CompanyFacade() {
+        this(0);
+    }
+
     public int getCompanyId() {
         return companyId;
     }
@@ -53,6 +57,7 @@ public class CompanyFacade extends ClientFacade {
         setOk(DbUtils.runQuery(DbCompanyManager.IS_COMPANY_EXIST, values));
         if (isOk) {
             System.out.println("Logged in successfully!");
+            setCompanyId(companiesDbDao.getCompanyIdInLogin(email, password));
             return true;
         } else {
             throw new LoginException();

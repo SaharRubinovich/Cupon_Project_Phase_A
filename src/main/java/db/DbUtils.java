@@ -6,12 +6,16 @@ import java.util.Map;
 public class DbUtils {
     private static Connection connection = null;
 
-    public static void runQuery(String dbString) throws SQLException, InterruptedException {
-        connection = ConnectionPool.getInstance().getConnection();
+    public static void runQuery(String dbString) {
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(dbString);
+            preparedStatement.execute();
+            ConnectionPool.getInstance().returnConnection(connection);
+        } catch (InterruptedException | SQLException e) {
+            System.out.println(e.getMessage());
+        }
 
-        PreparedStatement preparedStatement = connection.prepareStatement(dbString);
-        preparedStatement.execute();
-        ConnectionPool.getInstance().returnConnection(connection);
     }
 
     public static boolean runQuery(String dbString, Map<Integer, Object> values)  {

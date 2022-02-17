@@ -27,6 +27,10 @@ public class CustomerFacade extends ClientFacade {
         setCustomerId(customerId);
     }
 
+    public CustomerFacade() {
+        this(0);
+    }
+
     public int getCustomerId() {
         return customerId;
     }
@@ -43,6 +47,7 @@ public class CustomerFacade extends ClientFacade {
         boolean allOk = DbUtils.runQuery(DbCustomerManager.IS_CUSTOMER_EXIST, values);
         if (allOk){
             System.out.println("Logged in successfully!");
+            setCustomerId(customersDbDao.getCustomerIdInLogin(email, password));
             return true;
         } else {
             throw new LoginException();
