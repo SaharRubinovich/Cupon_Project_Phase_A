@@ -3,11 +3,13 @@ package facade;
 import beans.Company;
 import exceptions.LoginException;
 
+import java.util.Stack;
+
 public class LoginManager {
     private static LoginManager instance;
 
     private LoginManager() {
-        instance = new LoginManager();
+        System.out.println("Login instance was created.");
     }
 
     ;
@@ -26,8 +28,7 @@ public class LoginManager {
     }
 
     public static ClientFacade login(String email, String password, ClientType clientType) {
-        ClientFacade clientFacade = null;
-        getInstance();
+        ClientFacade clientFacade;
         try {
             if (clientType.equals(ClientType.Administrator)) {
                 AdminFacade adminFacade = new AdminFacade();
@@ -48,7 +49,7 @@ public class LoginManager {
         } catch (LoginException e) {
             System.out.println(e.getMessage());
         }
-        return clientFacade;
+        return clientFacade = null;
     }
 
 }

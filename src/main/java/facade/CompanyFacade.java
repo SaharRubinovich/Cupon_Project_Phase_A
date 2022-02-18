@@ -70,14 +70,16 @@ public class CompanyFacade extends ClientFacade {
         values.put(2, coupon.getTitle());
         try {
             ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCompanyManager.CHECK_IF_COUPON_EXIST, values);
+            assert resultSet != null;
             resultSet.next();
-            if (resultSet.getInt("COUNT(*)") < 1) {
+            if (resultSet.getInt("counter") < 1) {
                 couponsDbDao.addCoupons(coupon);
                 System.out.println("Coupon was add");
+                coupon.setId(couponsDbDao.getCouponId(values));
             } else {
                 System.out.println("Coupon with the same name already exist for this company");
             }
-        } catch (SQLException | InterruptedException throwables) {
+        } catch (SQLException throwables) {
             throw new CompanyFacadeException("Error accord while trying to add new coupon");
         }
     }
@@ -105,7 +107,7 @@ public class CompanyFacade extends ClientFacade {
         List<Coupon> coupons;
         List<Coupon> filteredList = new ArrayList<>();
         coupons = couponsDbDao.getAllCoupons();
-        filteredList = coupons.stream().filter(coupon -> this.companyId == coupon.getId())
+        filteredList = coupons.stream().filter(coupon -> this.companyId == coupon.getCompanyId())
                 .collect(Collectors.toList());
         return filteredList;
     }
@@ -114,17 +116,18 @@ public class CompanyFacade extends ClientFacade {
         List<Coupon> coupons;
         List<Coupon> filteredList;
         coupons = getCompanyCoupons();
-        filteredList = coupons.stream().filter(categoryId -> category.value.equals(categoryId.getCategory().value))
+        filteredList = coupons.stream().filter(categoryId -> category.value == categoryId.getCategory().value)
                 .collect(Collectors.toList());
         return filteredList;
     }
 
-    public List<Coupon> getCompanyCoupons(double maxPrice){
+    public List<Coupon> getCompanyCoupons(double maxPrice) {
         List<Coupon> coupons = getCompanyCoupons();
-        return coupons.stream().filter(price -> price.getPrice()<=maxPrice)
+        return coupons.stream().filter(price -> price.getPrice() <= maxPrice)
                 .collect(Collectors.toList());
     }
-    public Company getCompanyDetails(){
+
+    public Company getCompanyDetails() {
         return companiesDbDao.getOneCompany(getCompanyId());
     }
 }

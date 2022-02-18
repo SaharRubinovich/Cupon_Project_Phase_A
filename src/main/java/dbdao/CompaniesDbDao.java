@@ -27,16 +27,17 @@ public class CompaniesDbDao implements CompaniesDao {
         values.put(1, email);
         values.put(2, password);
         ResultSet resultSet = null;
+        resultSet = DbUtils.runQueryWithResultSet(DbCompanyManager.IS_COMPANY_EXIST, values);
         try {
-            resultSet = DbUtils.runQueryWithResultSet(DbCompanyManager.IS_COMPANY_EXIST, values);
-        } catch (SQLException | InterruptedException e) {
-            throw new CompanyAlreadyExistException();
+            assert resultSet != null;
+            resultSet.next();
+            if (resultSet.getInt("counter") > 0){
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-        if (resultSet != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
     /*
         Method to check if the company already exist in DB with map and two string values.
@@ -115,8 +116,10 @@ public class CompaniesDbDao implements CompaniesDao {
         values.put(1, companyId);
         try {
             ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCompanyManager.GET_SINGLE_COMPANY,values);
-            buildCompanyInstance(resultSet);
-        } catch (SQLException | InterruptedException throwables) {
+            assert resultSet != null;
+            resultSet.next();
+            company = buildCompanyInstance(resultSet);
+        } catch (SQLException throwables) {
             throw new GetCompanyException();
         }
         return company;
@@ -141,9 +144,10 @@ public class CompaniesDbDao implements CompaniesDao {
         values.put(2,password);
         try {
             ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCompanyManager.GET_SINGLE_ID,values);
+            assert resultSet != null;
             resultSet.next();
             return resultSet.getInt("id");
-        } catch (SQLException | InterruptedException e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
             throw new GetCompanyException();
         }

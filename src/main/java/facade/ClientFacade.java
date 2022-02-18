@@ -12,9 +12,9 @@ public abstract class ClientFacade {
     protected CompaniesDao companiesDao;
     protected CustomersDao customersDao;
     protected CouponsDao couponsDao;
-    protected CompaniesDbDao companiesDbDao;
-    protected CustomersDbDao customersDbDao;
-    protected CouponsDbDao couponsDbDao;
+    protected CompaniesDbDao companiesDbDao = new CompaniesDbDao();
+    protected CustomersDbDao customersDbDao = new CustomersDbDao();
+    protected CouponsDbDao couponsDbDao = new CouponsDbDao();
 
     public abstract boolean login(String email, String password) throws LoginException;
 }

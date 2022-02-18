@@ -8,5 +8,5 @@ public enum Category {
     RESTAURANT,
     VACATION;
 
-    public final Predicate<Integer> value = 1 + ordinal();
+    public final int value = 1 + ordinal();
 }

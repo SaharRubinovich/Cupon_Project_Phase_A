@@ -1,6 +1,10 @@
 package db;
 
+import beans.Category;
+
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DbManager {
     public static final String URL = "jdbc:mysql://localhost:3306/";
@@ -57,7 +61,7 @@ public class DbManager {
                     "    FOREIGN KEY (`category_id`)" +
                     "    REFERENCES `coupon_project`.`categories` (`id`)" +
                     "    ON DELETE CASCADE" +
-                    "    ON UPDATE NO ACTION);";
+                    "    ON UPDATE CASCADE);";
     public static final String CREATE_CUSTOMERS_VS_COUPONS = "CREATE TABLE IF NOT EXISTS" +
             " `coupon_project`.`customers_vs_coupons` (" +
             "  `customer_id` INT NOT NULL," +
@@ -142,6 +146,13 @@ public class DbManager {
             DbManager.createCustomersTable();
             DbManager.createCouponsTable();
             DbManager.createCustomersVsCouponsTable();
+            Map<Integer,Object> values = new HashMap<>();
+            for (int index = 0; index < Category.values().length; index++) {
+                values.clear();
+                values.put(1,Category.values()[index].ordinal()+1);
+                values.put(2,String.valueOf(Category.values()[index]));
+                DbUtils.runQuery(DbCategoriesManager.ADD_CATEGORY,values);
+            }
         } catch (SQLException | InterruptedException e) {
             System.out.println(e.getMessage());
         }

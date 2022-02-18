@@ -70,9 +70,10 @@ public class CouponsDbDao implements CouponsDao {
         values.put(1, couponId);
         try {
             ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCouponManager.GET_SINGLE_COUPON, values);
+            assert resultSet != null;
             resultSet.next();
             coupon = createCouponInstance(resultSet);
-        } catch (SQLException | InterruptedException e) {
+        } catch (SQLException e) {
             throw new GetCouponException();
         }
         return coupon;
@@ -100,7 +101,7 @@ public class CouponsDbDao implements CouponsDao {
     private Map<Integer, Object> createMapForSqlQuery(Coupon coupon) {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, coupon.getCompanyId());
-        values.put(2, coupon.getCategory());
+        values.put(2, coupon.getCategory().value);
         values.put(3, coupon.getTitle());
         values.put(4, coupon.getDescription());
         values.put(5, coupon.getStartDate());
@@ -124,5 +125,11 @@ public class CouponsDbDao implements CouponsDao {
                 resultSet.getDouble("price"),
                 resultSet.getString("image")
         );
+    }
+    public int getCouponId(Map<Integer,Object> values) throws SQLException {
+        ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCouponManager.GET_COUPON_ID,values);
+        assert resultSet != null;
+        resultSet.next();
+        return resultSet.getInt("id");
     }
 }

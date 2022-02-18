@@ -36,13 +36,16 @@ public class DbUtils {
         return false;
     }
 
-    public static ResultSet runQueryWithResultSet(String sql, Map<Integer, Object> values) throws SQLException, InterruptedException {
-
-            Connection connection = ConnectionPool.getInstance().getConnection();
-            PreparedStatement preparedStatement = fillStatement(sql, values);
-            ConnectionPool.getInstance().returnConnection(connection);
-            return preparedStatement.executeQuery();
-
+    public static ResultSet runQueryWithResultSet(String sql, Map<Integer, Object> values)  {
+            try {
+                Connection connection = ConnectionPool.getInstance().getConnection();
+                PreparedStatement preparedStatement = fillStatement(sql, values);
+                ConnectionPool.getInstance().returnConnection(connection);
+                return preparedStatement.executeQuery();
+            } catch (SQLException | InterruptedException throwables) {
+                System.out.println(throwables.getMessage());
+                return null;
+            }
     }
 
     private static PreparedStatement fillStatement(String sql, Map<Integer, Object> values) throws SQLException {

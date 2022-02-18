@@ -25,16 +25,17 @@ public class CustomersDbDao implements CustomersDao {
         values.put(1, email);
         values.put(2, password);
         ResultSet resultSet = null;
+        resultSet = DbUtils.runQueryWithResultSet(DbCustomerManager.IS_CUSTOMER_EXIST, values);
         try {
-            resultSet = DbUtils.runQueryWithResultSet(DbCustomerManager.IS_CUSTOMER_EXIST, values);
-        } catch (SQLException | InterruptedException e) {
-            throw new CustomerAlreadyExistException();
+            assert resultSet != null;
+            resultSet.next();
+            if (resultSet.getInt("counter") > 0) {
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-        if (resultSet != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 
     @Override
@@ -89,9 +90,11 @@ public class CustomersDbDao implements CustomersDao {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, customerId);
         try {
-        ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCustomerManager.GET_SINGLE_CUSTOMER, values);
-        customer = buildCustomer(resultSet);
-        } catch (SQLException | InterruptedException e) {
+            ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCustomerManager.GET_SINGLE_CUSTOMER, values);
+            assert resultSet != null;
+            resultSet.next();
+            customer = buildCustomer(resultSet);
+        } catch (SQLException e) {
             throw new GetCustomerException();
         }
         return customer;
@@ -106,6 +109,7 @@ public class CustomersDbDao implements CustomersDao {
                 resultSet.getString("password")
         );
     }
+
     public boolean checkPurchase(int customerId, int couponId) {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, customerId);
@@ -113,24 +117,27 @@ public class CustomersDbDao implements CustomersDao {
         ResultSet resultSet = null;
         try {
             resultSet = DbUtils.runQueryWithResultSet(DbCustomerManager.CHECK_IF_BOUGHT_COUPON, values);
+            assert resultSet != null;
             resultSet.next();
-            if (resultSet.getInt("COUNT(*)") > 0) {
+            if (resultSet.getInt("counter") > 0) {
                 return true;
             }
-        }catch (SQLException | InterruptedException throwables) {
+        } catch (SQLException throwables) {
             throw new CheckingPurchaseException();
         }
         return false;
     }
+
     public int getCustomerIdInLogin(String email, String password) throws LoginException {
         Map<Integer, Object> values = new HashMap<>();
         values.put(1, email);
         values.put(2, password);
         try {
-            ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCustomerManager.GET_SINGLE_CUSTOMER_ID,values);
+            ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCustomerManager.GET_SINGLE_CUSTOMER_ID, values);
+            assert resultSet != null;
             resultSet.next();
             return resultSet.getInt("id");
-        } catch (SQLException | InterruptedException e) {
+        } catch (SQLException e) {
             throw new LoginException("Error accord while fetching customer id.");
         }
     }

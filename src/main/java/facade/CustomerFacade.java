@@ -79,10 +79,11 @@ public class CustomerFacade extends ClientFacade {
         id.put(1, this.customerId);
         try {
             ResultSet resultSet = DbUtils.runQueryWithResultSet(DbCouponManager.GET_CUSTOMER_COUPONS_BY_ID, id);
+            assert resultSet != null;
             while (resultSet.next()) {
                 coupons.add(couponsDbDao.getOneCoupon(resultSet.getInt("coupon_id")));
             }
-        } catch (SQLException | InterruptedException e) {
+        } catch (SQLException e) {
             throw new CustomerFacadeException("There was an error while trying to get customer coupons");
         }
         return coupons;
@@ -95,9 +96,9 @@ public class CustomerFacade extends ClientFacade {
         } catch (CustomerFacadeException e) {
             System.out.println(e.getMessage());
         }
-        Predicate<Integer> categoryId = category.value;
+        int categoryId = category.value;
         return customerCoupons.stream()
-                .filter(couponCategory -> categoryId.equals(couponCategory.getCategory().value))
+                .filter(couponCategory -> categoryId == couponCategory.getCategory().value)
                 .collect(Collectors.toList());
     }
 
