@@ -1,6 +1,7 @@
 package beans;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Company {
     private int id;
@@ -53,6 +54,19 @@ public class Company {
 
     public void setCoupons(ArrayList<Coupon> coupons) {
         this.coupons = coupons;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Company)) return false;
+        Company company = (Company) o;
+        return getId() == company.getId() && Objects.equals(getName(), company.getName()) && Objects.equals(getEmail(), company.getEmail()) && Objects.equals(getPassword(), company.getPassword()) && Objects.equals(getCoupons(), company.getCoupons());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getEmail(), getPassword(), getCoupons());
     }
 
     @Override
