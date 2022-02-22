@@ -4,7 +4,15 @@ import java.sql.*;
 import java.util.Map;
 
 public class DbUtils {
-    private static Connection connection = null;
+    private static Connection connection;
+
+    static {
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+        } catch (InterruptedException | SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     public static void runQuery(String dbString) {
         try {
@@ -14,6 +22,12 @@ public class DbUtils {
             ConnectionPool.getInstance().returnConnection(connection);
         } catch (InterruptedException | SQLException e) {
             System.out.println(e.getMessage());
+        } finally {
+            try {
+                ConnectionPool.getInstance().returnConnection(connection);
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
         }
 
     }
@@ -25,12 +39,12 @@ public class DbUtils {
             preparedStatement.execute();
             return true;
         } catch (InterruptedException | SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         } finally {
             try {
                 ConnectionPool.getInstance().returnConnection(connection);
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
         return false;
@@ -45,10 +59,24 @@ public class DbUtils {
             } catch (SQLException | InterruptedException throwables) {
                 System.out.println(throwables.getMessage());
                 return null;
+            } finally {
+                try {
+                    ConnectionPool.getInstance().returnConnection(connection);
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
             }
     }
 
     private static PreparedStatement fillStatement(String sql, Map<Integer, Object> values) throws SQLException {
+        /*
+        try {
+            connection = ConnectionPool.getInstance().getConnection();
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+
+         */
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         values.forEach((key, value) -> {
             try {
@@ -64,7 +92,7 @@ public class DbUtils {
                     preparedStatement.setBoolean(key, (Boolean)value);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         });
         return preparedStatement;

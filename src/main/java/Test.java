@@ -37,8 +37,10 @@ public class Test {
             System.out.println("Login attempted succeed?: " + adminFacade.login("admin@admin.com", "admin"));
             Company faker = new Company(0, "Faker", "Faker@gmail.com", "Fk123");
             Company who = new Company(0, "Who?", "Testing@walla.com", "Wh123");
+            Company company = new Company(0,"testing","testing@email.com","Tt123");
             adminFacade.addCompany(faker);
             adminFacade.addCompany(who);
+            adminFacade.addCompany(company);
             TablePrinter.print(adminFacade.getAllCompanies());
             who.setEmail("who@gmail.com");
             adminFacade.updateCompany(who);

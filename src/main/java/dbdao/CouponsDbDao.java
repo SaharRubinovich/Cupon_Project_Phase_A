@@ -31,7 +31,7 @@ public class CouponsDbDao implements CouponsDao {
     @Override
     public boolean updateCoupon(Coupon coupon) {
         Map<Integer, Object> values = createMapForSqlQuery(coupon);
-        values.put(values.size() + 1, coupon.getId());
+        values.put(values.size() + 1 , coupon.getId());
         return DbUtils.runQuery(DbCouponManager.UPDATE_COUPON, values);
     }
 

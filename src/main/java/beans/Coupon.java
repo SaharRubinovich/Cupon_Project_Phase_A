@@ -1,6 +1,7 @@
 package beans;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class Coupon {
     private int id;
@@ -49,7 +50,7 @@ public class Coupon {
     }
 
     public void setCategory(int category) {
-        this.category = Category.values()[category];
+        this.category = Category.values()[category-1];
     }
 
     public String getTitle() {
@@ -106,6 +107,19 @@ public class Coupon {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Coupon)) return false;
+        Coupon coupon = (Coupon) o;
+        return getId() == coupon.getId() && getCompanyId() == coupon.getCompanyId() && getAmount() == coupon.getAmount() && Double.compare(coupon.getPrice(), getPrice()) == 0 && getCategory() == coupon.getCategory() && Objects.equals(getTitle(), coupon.getTitle()) && Objects.equals(getDescription(), coupon.getDescription()) && Objects.equals(getStartDate(), coupon.getStartDate()) && Objects.equals(getEndDate(), coupon.getEndDate()) && Objects.equals(getImage(), coupon.getImage());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getCompanyId(), getCategory(), getTitle(), getDescription(), getStartDate(), getEndDate(), getAmount(), getPrice(), getImage());
     }
 
     @Override
