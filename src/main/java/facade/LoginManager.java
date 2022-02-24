@@ -51,5 +51,8 @@ public class LoginManager {
         }
         return clientFacade = null;
     }
+    /*
+        The method that decide which facade to return depending on the info it got.
+     */
 
 }

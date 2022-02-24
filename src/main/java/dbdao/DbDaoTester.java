@@ -16,9 +16,12 @@ public class DbDaoTester {
         DbManager.createCouponsTable();
         DbManager.createCustomersVsCouponsTable();
          */
+        /*
         Company company = new Company(0,"testing","testing@email.com","Tt123");
         CompaniesDbDao companiesDbDao = new CompaniesDbDao();
         companiesDbDao.addCompany(company);
+        /*
+         */
 
 
         /*

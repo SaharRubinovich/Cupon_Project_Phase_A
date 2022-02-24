@@ -53,6 +53,10 @@ public class CustomerFacade extends ClientFacade {
             throw new LoginException();
         }
     }
+    /*
+        Login method, will check the db with the info we provided to see if there is a customer that matches it.
+        if there is will return true, else will throw custom exception.
+     */
 
     public void purchaseCoupon(Coupon coupon) throws CustomerFacadeException {
         if (customersDbDao.checkPurchase(this.customerId, coupon.getId())) {
@@ -72,6 +76,12 @@ public class CustomerFacade extends ClientFacade {
         DbUtils.runQuery(DbCouponManager.UPDATE_COUPON_AMOUNT, values);
         System.out.println("Coupon was purchased");
     }
+    /*
+        Method to purchase a coupon for the customer. will check if the customer already purchase the coupon he want,
+        check if there is any coupon at all to buy and will check if the coupon manged to escape the daily job and stayed
+        even through the expiry date already passed. if all will be ok that purchase will happen and the customer vs
+        coupon table will be updated.
+     */
 
     public List<Coupon> getCustomerCoupons() throws CustomerFacadeException {
         ArrayList<Coupon> coupons = new ArrayList<>();
@@ -88,6 +98,10 @@ public class CustomerFacade extends ClientFacade {
         }
         return coupons;
     }
+    /*
+        return a list of the customer that the customer bought through the info in the customer vs coupon table in the
+        db.
+     */
 
     public List<Coupon> getCustomerCoupons(Category category) {
         ArrayList<Coupon> customerCoupons = null;
@@ -101,6 +115,9 @@ public class CustomerFacade extends ClientFacade {
                 .filter(couponCategory -> categoryId == couponCategory.getCategory().value)
                 .collect(Collectors.toList());
     }
+    /*
+        give a list of the customer purchase coupons but filter it with the category it was asked for.
+     */
 
     public List<Coupon> getCustomerCoupons(double maxPrice) {
         ArrayList<Coupon> coupons = null;
@@ -114,7 +131,13 @@ public class CustomerFacade extends ClientFacade {
                 .collect(Collectors.toList());
         return filteredList;
     }
+    /*
+        Same as above, now filter with max price in mind
+     */
     public Customer getCustomerDetails(){
         return customersDbDao.getOneCustomer(this.customerId);
     }
+    /*
+        give the customer info of the customer we logged into at the start.
+     */
 }

@@ -63,6 +63,11 @@ public class CompanyFacade extends ClientFacade {
             throw new LoginException();
         }
     }
+    /*
+        The login method, take the password and email and put them in hashMap and sent it to the query to check
+        if the info matches any of the companies in the db. will return true if it find one or exception
+        if not.
+     */
 
     public void addCoupon(Coupon coupon) throws CompanyFacadeException {
         Map<Integer, Object> values = new HashMap<>();
@@ -83,6 +88,10 @@ public class CompanyFacade extends ClientFacade {
             throw new CompanyFacadeException("Error accord while trying to add new coupon");
         }
     }
+    /*
+        Method to add coupon to the company in the db. will check first if there is a coupon that matches the coupon
+        title and company id. will throw exception if there will be an error trying to fetch the info from the db.
+     */
 
     public void updateCoupon(Coupon coupon) throws CompanyFacadeException {
         if (couponsDbDao.updateCoupon(coupon)) {
@@ -91,6 +100,10 @@ public class CompanyFacade extends ClientFacade {
             throw new CompanyFacadeException("Error accord while updating the coupon.");
         }
     }
+    /*
+        updating coupon method. will send the new coupon info through the couponDbDao.
+        if error will accor will throw and exception.
+     */
 
     public void deleteCoupon(int couponId) throws CompanyFacadeException {
         Map<Integer, Object> id = new HashMap<>();
@@ -102,6 +115,10 @@ public class CompanyFacade extends ClientFacade {
             throw new CompanyFacadeException("Error accord while deleting coupon");
         }
     }
+    /*
+        Method to delete coupon with an id we provide. will delete it from both the coupon table and the
+        customer vs coupon table(The purchase history).
+     */
 
     public List<Coupon> getCompanyCoupons() {
         List<Coupon> coupons;
@@ -111,6 +128,10 @@ public class CompanyFacade extends ClientFacade {
                 .collect(Collectors.toList());
         return filteredList;
     }
+    /*
+        Method that will give us the company affiliated coupons, first will pull all the coupon and then filter
+        them so only the coupons with the right company id will be given.
+     */
 
     public List<Coupon> getCompanyCoupons(Category category) {
         List<Coupon> coupons;
@@ -120,14 +141,23 @@ public class CompanyFacade extends ClientFacade {
                 .collect(Collectors.toList());
         return filteredList;
     }
+    /*
+        Same as above but instead of just the company coupons, it will also filter them with a category we asked for
+     */
 
     public List<Coupon> getCompanyCoupons(double maxPrice) {
         List<Coupon> coupons = getCompanyCoupons();
         return coupons.stream().filter(price -> price.getPrice() <= maxPrice)
                 .collect(Collectors.toList());
     }
+    /*
+        same as above, now will filter with a max price in mind.
+     */
 
     public Company getCompanyDetails() {
         return companiesDbDao.getOneCompany(getCompanyId());
     }
+    /*
+        Give us a company instance of the company we logged into.
+     */
 }

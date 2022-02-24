@@ -8,7 +8,7 @@ import java.util.Stack;
 public class ConnectionPool {
     private static final int MAX_CONNECTIONS = 10;
     private static ConnectionPool instance = null;
-    private final Stack<Connection>connections = new Stack<>();
+    private static final Stack<Connection>connections = new Stack<>();
 
     private ConnectionPool() throws SQLException {
         openConnection();
@@ -69,5 +69,12 @@ public class ConnectionPool {
     The method that return a connection when the user done with it.
     notify the rest of the connections that now another connection is free so if there is a connection
     request waiting it can stop wait and start to work.
+     */
+    public static int getCurrentStackSize(){
+        return connections.size();
+    }
+    /*
+        Static method to check the current amount of available connections.
+        used in the testing to check the other connection pool methods.
      */
 }
