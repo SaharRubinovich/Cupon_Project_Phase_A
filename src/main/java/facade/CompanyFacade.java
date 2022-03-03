@@ -85,7 +85,8 @@ public class CompanyFacade extends ClientFacade {
                 System.out.println("Coupon with the same name already exist for this company");
             }
         } catch (SQLException throwables) {
-            throw new CompanyFacadeException("Error accord while trying to add new coupon");
+            //throw new CompanyFacadeException("Error accord while trying to add new coupon");
+            System.out.println(throwables.getMessage());
         }
     }
     /*
