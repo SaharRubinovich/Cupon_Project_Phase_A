@@ -98,7 +98,7 @@ public class CompaniesDbDao implements CompaniesDao {
                companies.add(buildCompanyInstance(resultSet));
            }
         } catch (SQLException | InterruptedException throwables) {
-            throwables.printStackTrace();
+            System.out.println(throwables.getMessage());
         }
         return companies;
     }
